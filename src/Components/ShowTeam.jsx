@@ -16,6 +16,11 @@ const ShowTeam = () => {
           Loading...
         </Typography>
       )}
+       {profileData?.length !== 0 ? (
+        ""
+      ) : (
+        <h4 style={{ textAlign: "center" }}>No Teams Available</h4>
+      )}
         <Grid container spacing={3}>
         {profileData?.map((row) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={row._id}>
