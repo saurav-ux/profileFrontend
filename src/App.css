@@ -22,13 +22,34 @@
   gap: 20px;
 
 }
+.filterDialog{
+  display: flex;
+}
 
 .filter1a{
   /* padding: 20px; */
   flex: 1 1 300px;
  
 }
+.mainBox {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
+.subBox {
+  width: 45%; /* Adjust the width as needed */
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.team{
+  margin-top: 50px;
+  padding: 30px;
+}
 
 @media screen and (max-width: 768px) {
   .filter1a {

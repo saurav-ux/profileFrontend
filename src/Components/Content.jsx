@@ -13,6 +13,7 @@ import {
   useSearchDataQuery,
   useDomainDataQuery,
   useGenderDataQuery,
+  useGetTeamDataQuery
 } from "../Services/profileApi";
 
 const Content = () => {
