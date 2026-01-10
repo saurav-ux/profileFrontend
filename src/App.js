@@ -10,39 +10,32 @@ import {
   Routes,
 } from "react-router-dom";
 function App() {
-
-
-
-
-
   return (
     <div className="App">
-<Router7>
+      <Router7>
         <Routes>
-        <Route
+          <Route
             path="/"
             element={
               <div>
-                
-    <Navbarr/>
-    <Content/>
+                <Navbarr />
+                <Content />
               </div>
-            }            
+            }
           />
 
           <Route
             path="/team"
             element={
               <div>
-                 <Navbarr/>
-                <ShowTeam/>
+                <Navbarr />
+                <ShowTeam />
               </div>
-            }            
+            }
           />
-         
         </Routes>
       </Router7>
-{/* 
+      {/* 
     <Navbarr/>
     <Content/> */}
     </div>

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Card, Typography, Pagination, Box } from "@mui/material";
 import Form from "react-bootstrap/Form";
 import Radio from "@mui/material/Radio";
@@ -9,11 +8,12 @@ import FormControl from "@mui/material/FormControl";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+
+
 import {
   useSearchDataQuery,
   useDomainDataQuery,
   useGenderDataQuery,
-  useGetTeamDataQuery
 } from "../Services/profileApi";
 
 const Content = () => {
@@ -32,25 +32,16 @@ const Content = () => {
     gender: gender,
     domain: domain,
   };
-  //------------------RTK Query fetch---------------------
+
   const { data: profileData, isLoading, isError } = useSearchDataQuery(param);
   const { data: domainData } = useDomainDataQuery();
   const { data: genderData } = useGenderDataQuery();
-  // console.log("searh", searchData);
 
-  useEffect(
-    () => {
-      if (profileData) {
-        setTotalPages(Math.ceil(profileData.totalCount / pageSize));
-      }
-    },
-    [profileData],
-    [search],
-    [avail],
-    [domain],
-    [gender],
-    [currentPage]
-  );
+  useEffect(() => {
+    if (profileData) {
+      setTotalPages(Math.ceil(profileData.totalCount / pageSize));
+    }
+  }, [profileData, search, avail, domain, gender, currentPage]);
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
@@ -58,11 +49,9 @@ const Content = () => {
 
   const handleChange = (e) => {
     setSearch(e.target.value);
-    console.log(e.target.value);
   };
 
   const handleAvail = (e) => {
-    console.log("ecv", e.target.value);
     if (e.target.value === "yes") {
       setAvail(true);
     } else {
@@ -71,173 +60,173 @@ const Content = () => {
   };
 
   return (
-    <div style={{ margin: 25 }}>
-      <br /> <br /> <br />
-      {/* //----------------------search bar------------------------------------// */}
-      <Form className="d-flex">
-        <Form.Control
-          type="search"
-          placeholder="Search"
-          //  className="me-2"
-          aria-label="Search"
-          onChange={handleChange}
-        />
-      </Form>
-      <br /> <br />
-      {/* //----------------------Filter bar------------------------------------// */}
-      <div className="filter">
-        <div className="filter1a">
-          <Autocomplete
-            sx={{ width: 300 }}
-            disablePortal
-            fullWidth
-            id="device_group_name"
-            name="Gender"
-            options={genderData || []}
-            getOptionLabel={(data) => data?.gender || ""}
-            onChange={(event, value) => {
-              console.log("value", value);
-              if (value && value.gender === null) {
-                setGender("");
-              } else if (value && value.gender) {
-                setGender(value.gender);
-              }
-            }}
-            renderOption={(props, option) => (
-              <Box component="li" {...props} key={option.id}>
-                {option.gender}
-              </Box>
-            )}
-            renderInput={(params) => <TextField {...params} label="Gender" />}
-          />
+    <div className="app-container">
+      {/* ------------------ Controls Section ------------------ */}
+      <div className="controls-wrapper">
+        <Typography
+          variant="h4"
+          gutterBottom
+          align="center"
+          style={{ fontWeight: "bold", color: "#2d3748", marginBottom: "25px" }}
+        >
+          Team Directory
+        </Typography>
+
+        {/* Search Bar */}
+        <div className="search-section">
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search by name..."
+              aria-label="Search"
+              className="search-input"
+              onChange={handleChange}
+            />
+          </Form>
         </div>
-        <div className="filter1a">
-          <Autocomplete
-            sx={{ width: 300 }}
-            disablePortal
-            fullWidth
-            id="device_group_name"
-            name="Gender"
-            options={domainData || []}
-            getOptionLabel={(data) => data?.domain || ""}
-            onChange={(event, value) => {
-              console.log("value", value);
-              if (value && value.domain === null) {
-                setDomain("");
-              } else if (value && value.domain) {
-                setDomain(value.domain);
-              }
-            }}
-            renderOption={(props, option) => (
-              <Box component="li" {...props} key={option.id}>
-                {option.domain}
-              </Box>
-            )}
-            renderInput={(params) => <TextField {...params} label="Domain" />}
-          />
-        </div>
-        <div className="filter1a">
-          <FormControl>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-            >
-              <FormControlLabel
-                value="yes"
-                control={<Radio />}
-                label="Available"
+
+        {/* Filter Bar */}
+        <div className="filter-container">
+          <div className="filter-item">
+            <Autocomplete
+              disablePortal
+              fullWidth
+              size="small"
+              id="combo-box-gender"
+              options={genderData || []}
+              getOptionLabel={(data) => data?.gender || ""}
+              onChange={(event, value) => {
+                if (value && value.gender === null) setGender("");
+                else if (value && value.gender) setGender(value.gender);
+                else setGender("");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Filter by Gender"
+                  variant="outlined"
+                />
+              )}
+            />
+          </div>
+
+          <div className="filter-item">
+            <Autocomplete
+              disablePortal
+              fullWidth
+              size="small"
+              id="combo-box-domain"
+              options={domainData || []}
+              getOptionLabel={(data) => data?.domain || ""}
+              onChange={(event, value) => {
+                if (value && value.domain === null) setDomain("");
+                else if (value && value.domain) setDomain(value.domain);
+                else setDomain("");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Filter by Domain"
+                  variant="outlined"
+                />
+              )}
+            />
+          </div>
+
+          <div className="filter-item radio-group-container">
+            <FormControl component="fieldset">
+              <RadioGroup
+                row
+                aria-label="availability"
+                name="row-radio-buttons-group"
                 onChange={handleAvail}
-              />
-              <FormControlLabel
-                value="no"
-                control={<Radio />}
-                label="Not Available"
-                onChange={handleAvail}
-              />
-            </RadioGroup>
-          </FormControl>
+              >
+                <FormControlLabel
+                  value="yes"
+                  control={<Radio size="small" />}
+                  label="Available"
+                />
+                <FormControlLabel
+                  value="no"
+                  control={<Radio size="small" />}
+                  label="Not Available"
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
         </div>
       </div>
-      <br />
-      {profileData?.data.length !== 0 ? (
-        ""
-      ) : (
-        <h4 style={{ textAlign: "center" }}>No Matching</h4>
-      )}
-      <br />
+
+      {/* ------------------ Status Messages ------------------ */}
       {isError && (
-        <Typography variant="h6" style={{ textAlign: "center" }}>
-          Something went wrong...
+        <Typography variant="h6" className="no-results" color="error">
+          Something went wrong while fetching data.
         </Typography>
       )}
+
       {isLoading && (
-        <Typography variant="h6" style={{ textAlign: "center" }}>
-          Loading...
+        <Typography variant="h6" className="no-results">
+          Loading profiles...
         </Typography>
       )}
-      {/* //---------------------------------Profile Area---------------------------// */}
+
+      {!isLoading && !isError && profileData?.data.length === 0 && (
+        <div className="no-results">
+          <h4>No profiles found matching your criteria.</h4>
+        </div>
+      )}
+
+      {/* ------------------ Grid Content ------------------ */}
       <Grid container spacing={3}>
         {profileData?.data?.map((row) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={row._id}>
-            <Card sx={{ p: 1, borderRadius: 8, boxShadow: 4 }}>
-              <div style={{ textAlign: "center" }}>
+          <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={row._id}>
+            <Card className="profile-card" elevation={2}>
+              <div className="avatar-wrapper">
                 <img
                   src={row.avatar}
-                  alt=""
-                  style={{ width: "30%", borderRadius: "50%" }}
+                  alt={`${row.first_name} avatar`}
+                  className="avatar-img"
                 />
               </div>
-              <div style={{ marginTop: 12 }}>
-                <Typography variant="h6" align="center">
+
+              <div className="card-content" style={{ textAlign: "center" }}>
+                <Typography variant="h6" className="user-name">
                   {row.first_name} {row.last_name}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Email: {row.email}
+
+                <Typography variant="body2" className="user-email">
+                  {row.email}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  color="textSecondary"
+
+                <Box mt={1} mb={1}>
+                  <span className="info-chip">{row.gender}</span>
+                  <span className="info-chip">{row.domain}</span>
+                </Box>
+
+                <div
+                  className={`status-badge ${
+                    row.available ? "status-available" : "status-unavailable"
+                  }`}
                 >
-                  Gender: {row.gender}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Domain: {row.domain}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  color="textSecondary"
-                >
-                  Available: {row.available ? "True" : "False"}
-                </Typography>
+                  {row.available ? "Available" : "Busy"}
+                </div>
               </div>
             </Card>
           </Grid>
         ))}
       </Grid>
-      <br />
-      <br />
-      {isLoading ? (
-        ""
-      ) : (
-        <Box mt={4} display="flex" justifyContent="center">
+
+      {/* ------------------ Pagination ------------------ */}
+      {!isLoading && profileData?.data.length > 0 && (
+        <Box className="pagination-wrapper">
           <Pagination
-            count={profileData?.totalPages}
+            count={profileData?.totalPages || totalPages}
             page={currentPage}
             onChange={handlePageChange}
             variant="outlined"
             shape="rounded"
-            color="secondary"
+            color="primary"
+            size="large"
           />
         </Box>
       )}

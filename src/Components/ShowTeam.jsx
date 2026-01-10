@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 import { Grid, Card, Typography } from "@mui/material";
-import { useGetTeamDataQuery } from '../Services/profileApi';
+import { useGetTeamDataQuery } from "../Services/profileApi";
 const ShowTeam = () => {
+  const { data: profileData, isLoading, isError } = useGetTeamDataQuery();
 
-    const { data: profileData, isLoading, isError } = useGetTeamDataQuery();
   return (
-    <div className='team'>
-         {isError && (
+    <div className="team">
+      {isError && (
         <Typography variant="h6" style={{ textAlign: "center" }}>
           Something went wrong...
         </Typography>
@@ -16,12 +16,12 @@ const ShowTeam = () => {
           Loading...
         </Typography>
       )}
-       {profileData?.length !== 0 ? (
+      {profileData?.length !== 0 ? (
         ""
       ) : (
         <h4 style={{ textAlign: "center" }}>No Teams Available</h4>
       )}
-        <Grid container spacing={3}>
+      <Grid container spacing={3}>
         {profileData?.map((row) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={row._id}>
             <Card sx={{ p: 1, borderRadius: 8, boxShadow: 4 }}>
@@ -70,7 +70,7 @@ const ShowTeam = () => {
         ))}
       </Grid>
     </div>
-  )
-}
+  );
+};
 
-export default ShowTeam
+export default ShowTeam;

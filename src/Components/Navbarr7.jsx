@@ -1,44 +1,39 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import AddTeam from "./AddTeam";
 import { Button } from "@mui/material";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
+import AddTeam from "./AddTeam";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 const Navbarr = () => {
   const [openAddModel, setOpenAddModel] = useState(false);
   const navigate = useNavigate();
-  const handleClick = () => {
-    setOpenAddModel(true);
-  };
-
-  const handleBotton = () => {
-    navigate("/team");
-  };
 
   return (
-    <div>
-      <Navbar expand="lg" className="bg-body-tertiary" fixed="top">
-        <Container fluid>
-          <Navbar.Brand href="/">Home</Navbar.Brand>
+    <>
+      <Navbar expand="lg" fixed="top" className="custom-navbar">
+        <Container fluid className="navbar-container">
+          <Navbar.Brand href="/" className="brand-text">
+            Team Manager
+          </Navbar.Brand>
+
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: "100px" }}
-              navbarScroll
-            >
-              <Button variant="contained" color="primary" onClick={handleClick}>
-                Add Teams
+            <Nav className="nav-actions ms-auto">
+              <Button
+                variant="contained"
+                className="nav-btn primary-btn"
+                onClick={() => setOpenAddModel(true)}
+              >
+                Add Team
               </Button>
 
               <Button
-                variant="contained"
-                color="primary"
-                onClick={handleBotton}
-                style={{ marginLeft: "20px" }}
+                variant="outlined"
+                className="nav-btn secondary-btn"
+                onClick={() => navigate("/team")}
               >
                 Show Teams
               </Button>
@@ -48,7 +43,7 @@ const Navbarr = () => {
       </Navbar>
 
       <AddTeam openAddModel={openAddModel} setOpenAddModel={setOpenAddModel} />
-    </div>
+    </>
   );
 };
 
