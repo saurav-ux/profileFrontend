@@ -5,7 +5,6 @@ import Content from './Components/Content';
 import ShowTeam from './Components/ShowTeam';
 import {
   BrowserRouter as Router7,
-  Switch,
   Route,
   Routes,
 } from "react-router-dom";
