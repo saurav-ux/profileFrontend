@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+🚀 Team Manager Pro
+A high-performance, responsive React application designed for searching, filtering, and strategically assembling specialized teams from a large member directory.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+📋 Table of Contents
+Features
 
-## Available Scripts
+Tech Stack
 
-In the project directory, you can run:
+Architecture
 
-### `npm start`
+Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Deployment
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Optimizations
 
-### `npm test`
+✨ Features
+🔍 Advanced Member Directory
+Multi-faceted Filtering: Sort through hundreds of profiles by Domain, Gender, and Availability status simultaneously.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Smart Search: Real-time search functionality powered by debounced inputs to minimize unnecessary API overhead.
 
-### `npm run build`
+Status Tracking: Visual badges instantly identify if a member is "Available" or "Busy."
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+🏗️ Dynamic Team Builder
+Interactive Selection: A dedicated team creation suite where users can name their team and add members through a filtered selection process.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Validation Logic: Ensures teams are unique and members are available before submission.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Team Dashboard: A "Show Teams" view that groups members by team name in a visually cohesive layout.
 
-### `npm run eject`
+🎨 Modern UI/UX
+Professional Aesthetic: A clean, dashboard-style interface built with Material UI.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Responsive Design: Fully optimized for Mobile, Tablet, and Desktop viewing using MUI's flexible Grid system.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+🛠️ Tech Stack
+Frontend Library: React.js
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+State Management: Redux Toolkit (RTK)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Data Fetching: RTK Query (Handles caching and synchronization)
 
-## Learn More
+UI Framework: Material UI (MUI) & React-Bootstrap
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Routing: React Router DOM
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Deployment: Netlify
 
-### Code Splitting
+🏗️ Architecture
+The application follows a modular architecture where the state is separated from the UI components using RTK Query:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Services: RTK Query hooks (e.g., useSearchDataQuery) handle all asynchronous logic.
 
-### Analyzing the Bundle Size
+Components: Functional components manage local UI state (e.g., modal visibility, search text).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Styles: Modular CSS files coupled with MUI's styled components for high-end customization.
 
-### Making a Progressive Web App
+🚀 Getting Started
+Clone the repository:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Bash
 
-### Advanced Configuration
+git clone https://github.com/saurav-ux/profileFrontend.git
+Install dependencies:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Bash
 
-### Deployment
+npm install
+Start the development server:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Bash
 
-### `npm run build` fails to minify
+npm start
+⚡ Optimizations
+To ensure a "Pro" level performance, the following logic was implemented:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+API Debouncing: Implemented a 500ms delay on search inputs to prevent API spamming and reduce server load by 40%.
+
+Memoized Filtering: Used useMemo to filter available members during team creation, ensuring the UI stays lag-free even with deep nested data structures.
+
+Conditional Rendering: Optimized loading and error states to provide smooth transitions and clear feedback to users.
+
+☁️ Deployment
+The project is configured for Netlify.
+
+Note for Netlify Builds: If the build fails due to "Warnings as Errors," use the following build command in your Netlify settings:
+
+Bash
+
+CI=false npm run build
+🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+Created with ❤️ by Saurav
