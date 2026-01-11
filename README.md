@@ -1,95 +1,184 @@
-🚀 Team Manager Pro
-A high-performance, responsive React application designed for searching, filtering, and strategically assembling specialized teams from a large member directory.
+# 🚀 Team Manager
 
-📋 Table of Contents
-Features
+A high-performance, responsive **full-stack** application designed for searching, filtering, and strategically assembling specialized teams from a large member directory.
 
-Tech Stack
+---
 
-Architecture
+## 📋 Table of Contents
 
-Getting Started
+* Features
+* Tech Stack
+* Architecture
+* Backend Overview
+* Getting Started
+* Deployment
+* Optimizations
 
-Deployment
+---
 
-Optimizations
+## ✨ Features
 
-✨ Features
-🔍 Advanced Member Directory
-Multi-faceted Filtering: Sort through hundreds of profiles by Domain, Gender, and Availability status simultaneously.
+### 🔍 Advanced Member Directory
 
-Smart Search: Real-time search functionality powered by debounced inputs to minimize unnecessary API overhead.
+* **Multi-faceted Filtering:** Filter hundreds of profiles by **Domain, Gender, and Availability** simultaneously.
+* **Smart Search:** Real-time search powered by **debounced inputs** to minimize unnecessary API overhead.
+* **Status Tracking:** Visual badges instantly identify whether a member is **Available** or **Busy**.
 
-Status Tracking: Visual badges instantly identify if a member is "Available" or "Busy."
+### 🏗️ Dynamic Team Builder
 
-🏗️ Dynamic Team Builder
-Interactive Selection: A dedicated team creation suite where users can name their team and add members through a filtered selection process.
+* **Interactive Selection:** Create teams by naming them and adding members through a filtered selection flow.
+* **Validation Logic:** Prevents duplicate teams and ensures only **available members** can be assigned.
+* **Team Dashboard:** A **Show Teams** view that groups members by team name in a clean, structured layout.
 
-Validation Logic: Ensures teams are unique and members are available before submission.
+### 🎨 Modern UI/UX
 
-Team Dashboard: A "Show Teams" view that groups members by team name in a visually cohesive layout.
+* **Professional Dashboard UI:** Built with **Material UI** for a polished enterprise look.
+* **Responsive Design:** Optimized for **Mobile, Tablet, and Desktop** using MUI’s Grid system.
 
-🎨 Modern UI/UX
-Professional Aesthetic: A clean, dashboard-style interface built with Material UI.
+---
 
-Responsive Design: Fully optimized for Mobile, Tablet, and Desktop viewing using MUI's flexible Grid system.
+## 🛠️ Tech Stack
 
-🛠️ Tech Stack
-Frontend Library: React.js
+### Frontend
 
-State Management: Redux Toolkit (RTK)
+* **Framework:** React.js
+* **State Management:** Redux Toolkit (RTK)
+* **Data Fetching:** RTK Query (Caching & synchronization)
+* **UI Framework:** Material UI (MUI) & React-Bootstrap
+* **Routing:** React Router DOM
+* **Deployment:** Netlify
 
-Data Fetching: RTK Query (Handles caching and synchronization)
+### Backend
 
-UI Framework: Material UI (MUI) & React-Bootstrap
+* **Runtime:** Node.js
+* **Framework:** Express.js
+* **Database:** MongoDB (Atlas)
+* **ODM:** Mongoose
+* **API Style:** RESTful APIs
 
-Routing: React Router DOM
+---
 
-Deployment: Netlify
+## 🏗️ Architecture
 
-🏗️ Architecture
-The application follows a modular architecture where the state is separated from the UI components using RTK Query:
+The application follows a **clean full-stack modular architecture**:
 
-Services: RTK Query hooks (e.g., useSearchDataQuery) handle all asynchronous logic.
+### Frontend
 
-Components: Functional components manage local UI state (e.g., modal visibility, search text).
+* **Services:** RTK Query APIs handle all asynchronous operations and caching.
+* **Components:** Functional components manage local UI state (modals, filters, inputs).
+* **Styles:** Modular CSS combined with MUI styled components.
 
-Styles: Modular CSS files coupled with MUI's styled components for high-end customization.
+### Backend
 
-🚀 Getting Started
-Clone the repository:
+* **Routes:** Separate Express routers for Profiles and Teams.
+* **Models:** Mongoose schemas for `ProfileData` and `TeamData`.
+* **Controllers:** Centralized business logic for team creation and availability updates.
+* **Validation Layer:** Ensures required fields exist before database writes.
 
-Bash
+---
 
+## 🧩 Backend Overview
+
+The backend is responsible for **data integrity, availability management, and team persistence**.
+
+### 🔐 Core Responsibilities
+
+* Fetch and filter member profiles
+* Create teams with validation
+* Automatically update member availability when assigned to a team
+* Prevent duplicate or invalid team entries
+
+### 📦 Key Collections
+
+* **ProfileData**
+
+  * Stores all user profiles
+  * Tracks availability status (`available: true | false`)
+* **TeamData**
+
+  * Stores team-member mappings
+  * Includes team name and full member metadata for faster reads
+
+### 🔄 Business Logic Flow
+
+1. User selects available members from the UI
+2. Frontend sends team payload to backend
+3. Backend:
+
+   * Validates member availability
+   * Inserts team records
+   * Updates assigned profiles → `available: false`
+4. Updated data is reflected instantly via RTK Query cache sync
+
+---
+
+## 🚀 Getting Started
+
+### Frontend Setup
+
+```bash
 git clone https://github.com/saurav-ux/profileFrontend.git
-Install dependencies:
-
-Bash
-
+cd profileFrontend
 npm install
-Start the development server:
-
-Bash
-
 npm start
-⚡ Optimizations
-To ensure a "Pro" level performance, the following logic was implemented:
+```
 
-API Debouncing: Implemented a 500ms delay on search inputs to prevent API spamming and reduce server load by 40%.
+### Backend Setup
 
-Memoized Filtering: Used useMemo to filter available members during team creation, ensuring the UI stays lag-free even with deep nested data structures.
+```bash
+git clone https://github.com/saurav-ux/profileBackend.git
+cd backend
+npm install
+npm run dev
+```
 
-Conditional Rendering: Optimized loading and error states to provide smooth transitions and clear feedback to users.
+> ⚠️ Ensure MongoDB Atlas URI is configured in `.env`
 
-☁️ Deployment
-The project is configured for Netlify.
+---
 
-Note for Netlify Builds: If the build fails due to "Warnings as Errors," use the following build command in your Netlify settings:
+## ⚡ Optimizations
 
-Bash
+To ensure **enterprise-grade performance**, the following strategies were implemented:
 
+* **API Debouncing:**
+  500ms debounce on search inputs, reducing API calls by **~40%**.
+
+* **Memoized Filtering:**
+  Used `useMemo` for member filtering during team creation to keep UI lag-free with large datasets.
+
+* **Efficient Data Modeling:**
+  Team records store essential profile data to minimize expensive joins.
+
+* **Optimized Rendering:**
+  Conditional rendering for loading and error states ensures smooth UX transitions.
+
+---
+
+## ☁️ Deployment
+
+### Frontend (Netlify)
+
+The project is configured for Netlify deployment.
+
+**Netlify Build Command (if warnings fail builds):**
+
+```bash
 CI=false npm run build
-🤝 Contributing
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+```
 
-Created with ❤️ by Saurav
+### Backend
+
+* Deployable on **Render / Railway / AWS / Vercel**
+* MongoDB hosted on **MongoDB Atlas**
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+Feel free to check the issues page or open a PR.
+
+---
+
+### ❤️ Created by **Saurav**
+
