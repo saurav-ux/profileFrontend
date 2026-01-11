@@ -142,6 +142,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   margin-bottom: 32px;
+  margin-top: 2rem;
 }
 
 .search-section {
@@ -203,7 +204,8 @@
 
 /* Hover Effect: Lift up */
 .profile-card:hover {
-  transform: translateY(-8px);
+  /* transform: translateY(-8px); */
+  transition: 0.3s;
   box-shadow: var(--shadow-lg) !important;
 }
 
@@ -303,4 +305,302 @@
   .filter1a {
     flex: 1 1 100%;
   }
+}
+
+/* ShowTeam.css */
+
+:root {
+  --primary-color: #3f51b5;
+  --bg-color: #f4f6f8;
+  --card-bg: #ffffff;
+  --text-main: #2d3748;
+  --text-light: #718096;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+}
+
+.team-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* Section for a specific team */
+.team-section {
+  margin-bottom: 60px;
+  background-color: transparent;
+}
+
+/* Team Title Styling */
+.team-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: var(--text-main);
+  margin-bottom: 25px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* Decorative line before team name */
+.team-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 32px;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+  margin-right: 15px;
+}
+
+/* Card Styling (Consistent with Content.js) */
+.member-card {
+  background: var(--card-bg);
+  border-radius: var(--radius) !important;
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.member-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover) !important;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  margin-bottom: 15px;
+}
+
+.team-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  object-fit: cover;
+}
+
+.card-details {
+  padding: 0 16px 20px 16px;
+  text-align: center;
+}
+
+.member-name {
+  font-weight: 700 !important;
+  color: var(--text-main);
+  font-size: 1.1rem !important;
+}
+
+.member-email {
+  font-size: 0.85rem !important;
+  color: var(--text-light);
+  margin-bottom: 12px !important;
+  word-wrap: break-word;
+}
+
+.domain-chip {
+  display: inline-block;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+/* Feedback messages */
+.feedback-msg {
+  text-align: center;
+  margin-top: 50px;
+  color: var(--text-light);
+}
+
+/* ShowTeam.css */
+
+:root {
+  --primary-color: #3f51b5;
+  --bg-color: #f4f6f8;
+  --card-bg: #ffffff;
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --radius: 16px;
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.team-page-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* --- Section Headers --- */
+.team-section-wrapper {
+  margin-bottom: 50px;
+}
+
+.team-header-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.team-title-text {
+  font-weight: 800 !important;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  position: relative;
+  padding-left: 15px;
+}
+
+/* The blue vertical bar next to team name */
+.team-title-text::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 70%;
+  width: 5px;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+
+/* --- Member Cards --- */
+.member-card-styled {
+  background: var(--card-bg);
+  border-radius: var(--radius) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.member-card-styled:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* Avatar Area */
+.avatar-box {
+  background: linear-gradient(to bottom, #ebf4ff 50%, #ffffff 50%);
+  padding: 20px 0 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.member-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* Content Area */
+.card-body {
+  padding: 16px 20px 24px 20px;
+  text-align: center;
+}
+
+.member-name {
+  font-weight: 700 !important;
+  color: var(--text-main);
+  margin-bottom: 4px !important;
+}
+
+.member-email {
+  font-size: 0.85rem !important;
+  color: var(--text-muted);
+  margin-bottom: 16px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Chips Container */
+.meta-tags {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* Loading/Error States */
+.state-message {
+  margin-top: 80px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* AddTeam.css */
+
+/* Dialog Header */
+.dialog-header {
+  background-color: #2d3748;
+  /* Dark Grey/Navy */
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+/* Scrollable Container for lists */
+.list-container {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Table Styling */
+.custom-table-head {
+  background-color: #f7fafc;
+}
+
+.custom-table-head th {
+  font-weight: 700 !important;
+  color: #4a5568;
+}
+
+/* Action Buttons */
+.btn-submit {
+  background-color: #3f51b5 !important;
+  color: white !important;
+  padding: 8px 30px !important;
+  font-weight: 600 !important;
+}
+
+.btn-remove {
+  text-transform: none !important;
+  border-radius: 20px !important;
+}
+
+.btn-add {
+  text-transform: none !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
 }

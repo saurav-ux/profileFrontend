@@ -15,7 +15,10 @@ const Navbarr = () => {
     <>
       <Navbar expand="lg" fixed="top" className="custom-navbar">
         <Container fluid className="navbar-container">
-          <Navbar.Brand href="/" className="brand-text">
+          <Navbar.Brand style={{ cursor: "pointer" }}
+            onClick={() => navigate("/")}
+            className="brand-text"
+          >
             Team Manager
           </Navbar.Brand>
 

@@ -1,383 +1,352 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Form from "react-bootstrap/Form";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import { Typography, Box } from "@mui/material";
+import React, { useState, useMemo, useEffect } from "react";
 import {
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Button,
+  IconButton,
+  TextField,
+  Autocomplete,
+  Typography,
+  Box,
   Table,
-  TableHead,
   TableBody,
-  TableRow,
   TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Snackbar,
+  Alert,
+  Paper,
+  InputAdornment,
 } from "@mui/material";
-//import Table from "@mui/material";
-import { useFormik } from "formik";
+import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useNavigate } from "react-router-dom";
+
 import {
   useDomainDataQuery,
   useAddTeamDataQuery,
   useAddTeamMutation,
-  useGetTeamDataQuery
+  useGetTeamDataQuery,
 } from "../Services/profileApi";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 const AddTeam = ({ openAddModel, setOpenAddModel }) => {
-  //handle snakbar
-  const [state, setState] = useState({
-    open: false,
-    vertical: "top",
-    horizontal: "center",
-  });
-  const [message, setMessage] = useState("Shift Added Successfully");
-  const [snakcolor, setSnackColor] = useState("success");
-  const { vertical, horizontal, open } = state;
-  const [search, setSearch] = useState("");
-  const [avail, setAvail] = useState("");
+  /* ---------------- State ---------------- */
+  const [teamName, setTeamName] = useState("");
   const [domain, setDomain] = useState("");
-  const [addData,setAddData] = useState([])
-  console.log("add",addData)
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(""); // For API Optimization
+  const [selectedMembers, setSelectedMembers] = useState([]);
 
-  const param = {
-    search: search,
-    avail: avail,
+  // Snackbar State
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const navigate = useNavigate();
+  /* ---------------- API Hooks ---------------- */
+  // Only fetch available users.
+  // We pass 'true' for avail implicitly via the API query logic or keep it strict here.
+  const queryParams = {
+    search: debouncedSearch,
     domain: domain,
+    avail: true,
   };
-  //-----------------------RTK Queryfetch-----------------------------
-  const { data: profileData, isLoading, isError } = useAddTeamDataQuery(param);
+
+  const { data: profileData, isLoading } = useAddTeamDataQuery(queryParams, {
+    skip: !openAddModel, // Don't fetch if modal is closed
+  });
+
   const { data: domainData } = useDomainDataQuery();
-  const{refetch:refetchTeam}= useGetTeamDataQuery()
-  const [addteamData] = useAddTeamMutation()
+  const { refetch: refetchTeams } = useGetTeamDataQuery();
+  const [addTeamMutation, { isLoading: isSubmitting }] = useAddTeamMutation();
 
-  const handleChange = (e) => {
-    setSearch(e.target.value);
-    console.log(e.target.value);
-  };
+  /* ---------------- Effects ---------------- */
+  // Debounce Search Input (500ms delay)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
 
-  const handleAvail = (e) => {
-    console.log("ecv", e.target.value);
-    if (e.target.value === "yes") {
-      setAvail(true);
-    } else {
-      setAvail(false);
-    }
-  };
-
-  useEffect(() => {}, [profileData], [search], [avail], [domain]);
-
+  // Reset form when modal closes
   const handleClose = () => {
     setOpenAddModel(false);
-    setAddData([]);
-    setDomain("");
-    setAvail("");
-    // resetForm()
+    setTimeout(() => {
+      setTeamName("");
+      setDomain("");
+      setSearch("");
+      setSelectedMembers([]);
+    }, 200); // Wait for animation
   };
 
-  const handleCloseSnack = () => {
-    setState({ ...state, open: false });
+  /* ---------------- Computed Data ---------------- */
+  // Filter out users who are already selected so they don't appear in the "Add" list
+  const availableCandidates = useMemo(() => {
+    if (!profileData?.data) return [];
+
+    return profileData.data.filter(
+      (user) => !selectedMembers.some((member) => member._id === user._id)
+    );
+  }, [profileData, selectedMembers]);
+
+  /* ---------------- Handlers ---------------- */
+  const handleAddMember = (user) => {
+    // Optional: Business Rule - Check if domains match (if required)
+    // if (domain && user.domain !== domain) {
+    //   showToast("User domain does not match team domain", "warning");
+    //   return;
+    // }
+    setSelectedMembers((prev) => [...prev, user]);
   };
 
-  const handleAdd = (id) => {
-    if(domain!==""  && avail!==""){
-        const filteredData = profileData?.data.filter(item => item?._id === id);
-        setAddData(prevData => [...prevData, ...filteredData]); // Append filteredData to addData
-    }
-    else{
-        setState({ vertical: "top", horizontal: "center", open: true });
-        setSnackColor("error");
-        setMessage("Please select Domain and Availability");
-    }
-   
-   // console.log("id", filteredData);
-  }
-
-  const handleDelete = (id) => {
-    const updatedData = addData.filter(item => item._id !== id);
-    setAddData(updatedData);
+  const handleRemoveMember = (id) => {
+    setSelectedMembers((prev) => prev.filter((m) => m._id !== id));
   };
 
-  //------------------SubmitForm starts---------------------
+  const showToast = (message, severity = "success") => {
+    setToast({ open: true, message, severity });
+  };
+
   const handleSubmit = async () => {
-    try {
-        if(domain!=="" && avail!==""){
-            const response = await addteamData(addData);
-            if (response.error) {
-              setState({ vertical: "top", horizontal: "center", open: true });
-              setSnackColor("error");
-              setMessage("Unable to add Team");
-            }
-            if (response?.data) {
-              setState({ vertical: "top", horizontal: "center", open: true });
-              setSnackColor("success");
-              setMessage("Team Added Successfully");
-              console.log("response", response);
-              setAddData([]);
-              setDomain("");
-              setAvail("");
-              refetchTeam();
-              setOpenAddModel(false);
-            }
-        }
-        else{
-            setState({ vertical: "top", horizontal: "center", open: true });
-            setSnackColor("error");
-            setMessage("Please select Domain and Availability");
-        }
-    
-    } catch (error) {
-      console.log("Error", error);
-      setState({ vertical: "top", horizontal: "center", open: true });
-      setSnackColor("error");
-      setMessage("Unable to add Team");
+    // 1. Validation
+    if (!teamName.trim()) {
+      showToast("Please enter a Team Name", "error");
+      return;
+    }
+    if (selectedMembers.length === 0) {
+      showToast("Please add at least one member", "error");
+      return;
     }
 
-   // action.resetForm();
+    // 2. Prepare Payload
+    const payload = {
+      teamName: teamName,
+      members: selectedMembers, // Backend likely expects array of IDs or Objects
+    };
+
+    // 3. API Call
+    try {
+      await addTeamMutation([payload]).unwrap();
+
+      showToast("Team created successfully!", "success");
+      refetchTeams(); // Update the dashboard
+      navigate("/team");
+      handleClose();
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to create team. Try again.", "error");
+    }
   };
+
   return (
-    <div>
-      <div>
-        <BootstrapDialog
-          onClose={handleClose}
-          fullWidth={true}
-          maxWidth={"sm"}
-          aria-labelledby="customized-dialog-title"
-          open={openAddModel}
-        >
-          <DialogTitle
-            sx={{ m: 0, p: 2 }}
-            id="customized-dialog-title"
-            style={{ backgroundColor: "black", color: "white" }}
-          >
-            Add Team
-          </DialogTitle>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
+    <>
+      <Dialog
+        open={openAddModel}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="md"
+        scroll="paper"
+      >
+        {/* Custom Header */}
+        <div className="dialog-header">
+          <Typography variant="h6" style={{ fontWeight: 600 }}>
+            Create New Team
+          </Typography>
+          <IconButton onClick={handleClose} style={{ color: "white" }}>
             <CloseIcon />
           </IconButton>
-          <DialogContent  dividers style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
-            {/* //----------------------search bar------------------------------------// */}
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-            <Form className="d-flex">
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-                onChange={handleChange}
-              />
-            </Form>
-            {/* //----------------------search bar ends------------------------------------// */}
-            <br /> <br />
-            <form>
-            <div className="filterDialog">
-              <div className="filter1a">
-                <Autocomplete
-                  sx={{ width: 200 }}
-                  disablePortal
-                  fullWidth
-                  
-                  id="device_group_name"
-                  name="Gender"
-                  options={domainData || []}
-                  getOptionLabel={(data) => data?.domain || ""}
-                  onChange={(event, value) => {
-                    console.log("value", value);
-                    if (value && value.domain === null) {
-                      setDomain("");
-                    } else if (value && value.domain) {
-                      setDomain(value.domain);
-                    }
-                  }}
-                  renderOption={(props, option) => (
-                    <Box component="li" {...props} key={option.id}>
-                      {option.domain}
-                    </Box>
-                  )}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Domain"  required/>
-                  )}
-                />
-              </div>
-              <div className="filter1a">
-                <FormControl>
-                    
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="row-radio-buttons-group"
-                    
-                  >
-                    <FormControlLabel
-                      value="yes"
-                      control={<Radio />}
-                      label="Available"
-                      onChange={handleAvail}
-                    />
-                    <FormControlLabel
-                      value="no"
-                      control={<Radio required />}
-                      label="Not Available"
-                      onChange={handleAvail}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </div>
-            </div>
-            {profileData?.data.length !== 0 ? (
-              ""
-            ) : (
-              <h4 style={{ textAlign: "center" }}>No Matching</h4>
-            )}
-            <br />
-            {isError && (
-              <Typography variant="h6" style={{ textAlign: "center" }}>
-                Something went wrong...
-              </Typography>
-            )}
-            {isLoading && (
-              <Typography variant="h6" style={{ textAlign: "center" }}>
-                Loading...
-              </Typography>
-            )}
-           
-              {addData.length!==0 ?
-                <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Domain</TableCell>
-                    <TableCell>Available</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {addData?.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <Typography variant="body1">
-                          {row.first_name} {row.last_name}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body1">{row.domain}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body1">
-                          {row.available ? "True" : "False"}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="contained" color="error" onClick={()=>handleDelete(row?._id)}>
-                          Remove
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-             
-              :
-              ""
-              }
-             
-            <hr/>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Domain</TableCell>
-                  <TableCell>Available</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {profileData?.data?.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Typography variant="body1">
-                        {row.first_name} {row.last_name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body1">{row.domain}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body1">
-                        {row.available ? "True" : "False"}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="contained" color="success" onClick={()=>handleAdd(row?._id)}>   
-                      Add               
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </form>
-            </div>
-            <div style={{ flexShrink: 0, padding: '10px', borderTop: '1px solid #ddd' }}>
-      <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}
-       style={{ backgroundColor: "black" }}
-      >
-        Submit
-      </Button>
-    </div>
-          </DialogContent>
-        </BootstrapDialog>
+        </div>
 
-        {/* alert snakbar start */}
-        <Snackbar
-          anchorOrigin={{ vertical, horizontal }}
-          key={vertical + horizontal}
-          open={open}
-          autoHideDuration={6000}
-          onClose={handleCloseSnack}
-        >
-          <Alert
-            onClose={handleCloseSnack}
-            severity={snakcolor}
-            sx={{ width: "100%" }}
+        <DialogContent dividers>
+          <Box display="flex" flexDirection="column" gap={3}>
+            {/* --- Form Section --- */}
+            <Box display="flex" gap={2} flexWrap="wrap">
+              <TextField
+                label="Team Name"
+                variant="outlined"
+                fullWidth
+                required
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                sx={{ flex: 1, minWidth: "250px" }}
+              />
+
+              <Autocomplete
+                options={domainData || []}
+                getOptionLabel={(option) => option?.domain || ""}
+                onChange={(e, value) => setDomain(value?.domain || "")}
+                sx={{ flex: 1, minWidth: "250px" }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Filter Domain (Optional)" />
+                )}
+              />
+            </Box>
+
+            {/* --- Selected Members Section --- */}
+            {selectedMembers.length > 0 && (
+              <Paper variant="outlined" sx={{ p: 2, bgcolor: "#f8f9fa" }}>
+                <Typography variant="subtitle2" gutterBottom color="primary">
+                  Selected Members ({selectedMembers.length})
+                </Typography>
+                <TableContainer sx={{ maxHeight: 200 }}>
+                  <Table size="small" stickyHeader>
+                    <TableBody>
+                      {selectedMembers.map((row) => (
+                        <TableRow key={row._id}>
+                          <TableCell sx={{ fontWeight: 500 }}>
+                            {row.first_name} {row.last_name}
+                          </TableCell>
+                          <TableCell>{row.domain}</TableCell>
+                          <TableCell align="right">
+                            <Button
+                              startIcon={<DeleteOutlineIcon />}
+                              size="small"
+                              color="error"
+                              className="btn-remove"
+                              onClick={() => handleRemoveMember(row._id)}
+                            >
+                              Remove
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            )}
+
+            {/* --- Search & Add Section --- */}
+            <Box>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Add Members
+              </Typography>
+
+              <TextField
+                placeholder="Search available members by name..."
+                fullWidth
+                size="small"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
+
+              <TableContainer className="list-container">
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow className="custom-table-head">
+                      <TableCell>Name</TableCell>
+                      <TableCell>Domain</TableCell>
+                      <TableCell align="right">Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={3} align="center">
+                          Loading...
+                        </TableCell>
+                      </TableRow>
+                    ) : availableCandidates.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={3}
+                          align="center"
+                          sx={{ color: "#718096", py: 3 }}
+                        >
+                          {search
+                            ? "No matching members found"
+                            : "No available members found"}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      availableCandidates.map((row) => (
+                        <TableRow key={row._id} hover>
+                          <TableCell>
+                            {row.first_name} {row.last_name}
+                          </TableCell>
+                          <TableCell>
+                            <Box
+                              component="span"
+                              sx={{
+                                bgcolor: "#edf2f7",
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1,
+                                fontSize: "0.75rem",
+                              }}
+                            >
+                              {row.domain}
+                            </Box>
+                          </TableCell>
+                          <TableCell align="right">
+                            <Button
+                              variant="contained"
+                              size="small"
+                              color="primary"
+                              className="btn-add"
+                              startIcon={<PersonAddIcon />}
+                              onClick={() => handleAddMember(row)}
+                            >
+                              Add
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 2, bgcolor: "#f7fafc" }}>
+          <Button onClick={handleClose} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            className="btn-submit"
+            disabled={isSubmitting}
           >
-            {message}
-          </Alert>
-        </Snackbar>
-        {/* alert snakbar end */}
-      </div>
-    </div>
+            {isSubmitting ? "Creating..." : "Create Team"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Notification Toast */}
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={4000}
+        onClose={() => setToast({ ...toast, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setToast({ ...toast, open: false })}
+          severity={toast.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

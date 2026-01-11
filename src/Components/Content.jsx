@@ -67,7 +67,7 @@ const Content = () => {
           variant="h4"
           gutterBottom
           align="center"
-          style={{ fontWeight: "bold", color: "#2d3748", marginBottom: "25px" }}
+          style={{ fontWeight: "bold", color: "#2d3748", marginBottom: "25px" ,marginTop:"20px"}}
         >
           Team Directory
         </Typography>
